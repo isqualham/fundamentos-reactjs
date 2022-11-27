@@ -1,5 +1,6 @@
 import {format, formatDistanceToNow} from 'date-fns';
 import ptBr from 'date-fns/locale/pt-BR';
+import { useState } from 'react';
 
 import { Avatar } from '../Avatar';
 import { Comment } from '../Comment';
@@ -17,13 +18,27 @@ export function Post({author, content, publishetAt}){
         addSuffix:true
     })
 
-    const comments = [
-        1,2
-    ]
+    const [comments, setComments] = useState([]);
+
+    const [newCommentText, setNewCommentText] = useState('');
 
     function handleCreateNewComment(){
         event.preventDefault();
-        console.log('oiiii');
+        setComments([...comments, newCommentText]);
+        setNewCommentText('');
+    }
+
+    function handleNewCommentChange(){
+        setNewCommentText(event.target.value);
+    }
+
+    function deleteComment(commentToDelete){
+
+        const commentsWithoutDeletedOne = comments.filter(comments => {
+            return comments != commentToDelete;
+        });
+
+        setComments(commentsWithoutDeletedOne);
     }
 
     return (
@@ -52,17 +67,19 @@ export function Post({author, content, publishetAt}){
                 {
                     content.map(item =>{
                         if(item.type == 'paragraph')
-                            return <p>{item.content}</p>
+                            return <p key={item.content}>{item.content}</p>
 
-                        return <a href="#">{item.content}</a>
+                        return <a href="#" key={item.content}>{item.content}</a>
                     })
                 }
             </div>
 
             <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
                 <strong>Deixe seu feedback</strong>
-                <textarea 
+                <textarea
                     placeholder="deixe um comentario"
+                    value={newCommentText}
+                    onChange={handleNewCommentChange}
                 />
                 <footer>
                     <button type="submmit">Publicar</button>
@@ -73,7 +90,11 @@ export function Post({author, content, publishetAt}){
                 {
                     comments.map(item =>{
                         return (
-                            <Comment />
+                            <Comment 
+                                key={item}
+                                content={item}
+                                onDeleteComment={deleteComment}
+                            />
                         )
                     })
                 }                
