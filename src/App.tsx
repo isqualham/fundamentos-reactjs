@@ -39,7 +39,7 @@ export function App() {
               <Post
                 key = {post.id}
                 author={post.author}
-                content={post.content}
+                content={post.content as []}
                 publishetAt={post.publishetAt}
               />
             )
