@@ -1,13 +1,26 @@
 import {format, formatDistanceToNow} from 'date-fns';
 import ptBr from 'date-fns/locale/pt-BR';
-import { useState } from 'react';
+import { ChangeEvent, FormEvent, InvalidEvent, useState} from 'react';
 
 import { Avatar } from '../Avatar';
 import { Comment } from '../Comment';
 
 import styles from './styles.module.css';
 
-export function Post({author, content, publishetAt}){
+interface PostProps {
+    author:{
+        name:string;
+        role:string;
+        avatarUrl:string;
+    };   
+    content:{
+            type:'paragraph' | 'link',
+            content:string
+        }[];
+    publishetAt: Date;
+}
+
+export function Post({author, content, publishetAt}:PostProps){
 
     const publishedDateFormatted = format(publishetAt, "d 'de' LLLL 'às' HH:mm'h'",{
         locale:ptBr
@@ -18,26 +31,26 @@ export function Post({author, content, publishetAt}){
         addSuffix:true
     });
 
-    const [comments, setComments] = useState([]);
+    const [comments, setComments] = useState(['']);
 
     const [newCommentText, setNewCommentText] = useState('');
 
-    function handleCreateNewComment(){
+    function handleCreateNewComment(event: FormEvent){
         event.preventDefault();
         setComments([...comments, newCommentText]);
         setNewCommentText('');
     }
 
-    function handleNewCommentChange(){
+    function handleNewCommentChange(event: ChangeEvent<HTMLTextAreaElement>){
         event.target.setCustomValidity('');
         setNewCommentText(event.target.value);
     }
 
-    function handleNewCommentInvalid(){
+    function handleNewCommentInvalid(event: InvalidEvent<HTMLTextAreaElement>){
         event.target.setCustomValidity('Esse campo é obrigatório');
     }
 
-    function deleteComment(commentToDelete){
+    function deleteComment(commentToDelete: string){
 
         const commentsWithoutDeletedOne = comments.filter(comments => {
             return comments != commentToDelete;
@@ -94,7 +107,7 @@ export function Post({author, content, publishetAt}){
                 />
                 <footer>                    
                     <button 
-                        type="submmit" 
+                        type="button" 
                         disabled={isNewCommentEmpty}
                     >
                         Publicar
