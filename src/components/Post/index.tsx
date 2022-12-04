@@ -107,7 +107,7 @@ export function Post({author, content, publishetAt}:PostProps){
                 />
                 <footer>                    
                     <button 
-                        type="button" 
+                        type="submit" 
                         disabled={isNewCommentEmpty}
                     >
                         Publicar
